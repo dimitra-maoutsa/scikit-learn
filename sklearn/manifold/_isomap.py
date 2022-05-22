@@ -101,6 +101,10 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
         Additional keyword arguments for the metric function.
 
         .. versionadded:: 0.22
+        
+    geodesic_curves : bool, default=False
+        Indicates whether information for computing the geodesic curves 
+        will be returned.
 
     Attributes
     ----------
@@ -126,6 +130,16 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
     feature_names_in_ : ndarray of shape (`n_features_in_`,)
         Names of features seen during :term:`fit`. Defined only when `X`
         has feature names that are all strings.
+        
+    geodesics : ndarray of shape (n_samples, n_samples)
+        Stores approximate geodesic curves between each pair of points in the
+        form of an N x N matrix of predecessors, i.e. row i of the predecessor
+        matrix contains information on the shortest paths rom point i to every 
+        other point.
+        To reconstruct the geodesic (shortest path) from point i to point j:
+        each entry predecessors[i, j] gives the index of the previous node 
+        in the path from point i to point j. If no path exists between point i and j, 
+        then predecessors[i, j] = -9999.
 
         .. versionadded:: 1.0
 
