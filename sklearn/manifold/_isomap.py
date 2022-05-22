@@ -102,7 +102,7 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
 
         .. versionadded:: 0.22
         
-    geodesic_curves : bool, default=False
+    return_geodesics : bool, default=False
         Indicates whether information for computing the geodesic curves 
         will be returned.
 
