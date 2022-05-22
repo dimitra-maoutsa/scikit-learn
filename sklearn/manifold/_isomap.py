@@ -131,6 +131,8 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
         Names of features seen during :term:`fit`. Defined only when `X`
         has feature names that are all strings.
         
+        .. versionadded:: 1.0
+        
     geodesics : ndarray of shape (n_samples, n_samples)
         Stores approximate geodesic curves between each pair of points in the
         form of an N x N matrix of predecessors, i.e. row i of the predecessor
@@ -141,7 +143,7 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
         in the path from point i to point j. If no path exists between point i and j, 
         then predecessors[i, j] = -9999.
 
-        .. versionadded:: 1.0
+        
 
     See Also
     --------
@@ -188,6 +190,7 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
         metric="minkowski",
         p=2,
         metric_params=None,
+        return_geodesics=False,
     ):
         self.n_neighbors = n_neighbors
         self.radius = radius
@@ -201,6 +204,8 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
         self.metric = metric
         self.p = p
         self.metric_params = metric_params
+        self.return_geodesics = return_geodesics
+        self.geodesics = None
 
     def _fit_transform(self, X):
         if self.n_neighbors is not None and self.radius is not None:
@@ -287,8 +292,12 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
                 metric=self.nbrs_.effective_metric_,
                 **self.nbrs_.effective_metric_params_,
             )
-
-        self.dist_matrix_ = shortest_path(nbg, method=self.path_method, directed=False)
+        
+        if self.return_geodesics:
+            self.dist_matrix_, self.geodesics = shortest_path(nbg, method=self.path_method,
+                                                            directed=False, return_predecessors=True)
+        else:
+            self.dist_matrix_ = shortest_path(nbg, method=self.path_method, directed=False)
 
         G = self.dist_matrix_**2
         G *= -0.5
