@@ -134,10 +134,10 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
         .. versionadded:: 1.0
         
     geodesics : ndarray of shape (n_samples, n_samples)
-        Stores approximate geodesic curves between each pair of points in the
-        form of an N x N matrix of predecessors, i.e. row i of the predecessor
-        matrix contains information on the shortest paths rom point i to every 
-        other point.
+        Stores information for constructing approximate geodesic curves between 
+        each pair of points in the form of an N x N matrix of predecessors, 
+        i.e. row i of the predecessor matrix contains information on the shortest 
+        paths rom point i to every other point.
         To reconstruct the geodesic (shortest path) from point i to point j:
         each entry predecessors[i, j] gives the index of the previous node 
         in the path from point i to point j. If no path exists between point i and j, 
@@ -419,7 +419,7 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
     
     def get_geodesic(self, from_i, to_j):
         """
-        Returns the geodesic path from sample X[from_i]
+        Returns indices of samples forming the geodesic path from sample X[from_i]
         to sample  X[to_j] , where X the data from which the embedding was constructed.
         (Requires the embedding to have been initialised with `return_geodesics=True`.)
         
@@ -432,9 +432,9 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
             
         Returns
         ----------
-        geodesic_path : array-like, shape (n_nodes, n_components)
-            Array with nodes on the geodesic path from X[from_i]
-            to X[to_j].
+        geodesic_path : array-like, shape (n_nodes)
+            Array with indices of `n_nodes` nodes forming the geodesic path from X[from_i]
+            to X[to_j]. If the two samples are disconnected returns an empty array.
             
         """
         check_is_fitted(self)
