@@ -415,3 +415,44 @@ class Isomap(_ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator):
         G_X *= -0.5
 
         return self.kernel_pca_.transform(G_X)
+    
+    
+    def get_geodesic(self, from_i, to_j):
+        """
+        Returns the geodesic path from sample X[from_i]
+        to sample  X[to_j] , where X the data from which the embedding was constructed.
+        (Requires the embedding to have been initialised with `return_geodesics=True`.)
+        
+        Parameters
+        ----------
+        from_i : int
+            Index of the sample from which the geodesic will be initiated.
+        to_j   : int
+            Index of the target of the geodesic.
+            
+        Returns
+        ----------
+        geodesic_path : array-like, shape (n_nodes, n_components)
+            Array with nodes on the geodesic path from X[from_i]
+            to X[to_j].
+            
+        """
+        check_is_fitted(self)
+        if not self.return_geodesics:
+            print('You should initialise the embedding with Isomap(..., return_geodesics=True)'. )
+            geo_path = []
+        else:
+            geo_path = [to_j]
+            temp = self.geodesics[from_i, to_j]
+            if temp == -9999:
+                print('There is no geodesic connecting the two samples!)
+                geo_path = []
+            else:
+                geo_path.append(temp)
+                while temp != from_i:
+                    temp = self.geodesics[from_i, temp]
+                    geo_path.append(temp)
+                
+                
+        return np.array(geo_path[::-1])
+            
